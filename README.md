@@ -9,5 +9,4 @@ To download a track from Deezer, make sure u [register an account on Deezer](htt
 `go-decrypt-deezer --id *track-id* --username deezer-username --password deezer-password`
 
 ## Contribute
-All requests are welcomed, but, please drop me a mail beforehand, I would love to respond to your mails.
-
+All requests are welcomed, but, please drop me a mail **herodotus94@gmail.com** beforehand, I would love to respond to your mails.
