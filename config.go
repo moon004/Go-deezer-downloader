@@ -41,7 +41,7 @@ func init() {
 
 	flag.Parse()
 
-	fmt.Println("Make Sure You Register your Deezer")
+	// fmt.Println("Make Sure You Register your Deezer")
 	debug("Configuration:")
 
 	debug("\tDebug: %t", cfg.Debug)

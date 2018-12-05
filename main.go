@@ -58,7 +58,7 @@ type DeezTrack struct {
 }
 
 func main() {
-	fmt.Println("Program Started")
+	// fmt.Println("Program Started")
 	id := cfg.ID
 	client, err := Login()
 	if err != nil {
@@ -148,7 +148,6 @@ func Login() (*http.Client, *OnError) {
 
 	req.Header.Set("Content-type", "application/x-www-form-urlencoded")
 	req.Header.Add("Content-Length", strconv.Itoa(len(form.Encode())))
-	fmt.Println(req.URL.String())
 
 	debug("The Header of Login Request", req.Header)
 
@@ -172,7 +171,7 @@ func Login() (*http.Client, *OnError) {
 }
 
 func GetUrlDownload(id string, client *http.Client) (string, string, *http.Client, *OnError) {
-	fmt.Println("Getting Download url")
+	// fmt.Println("Getting Download url")
 	jsonTrack := &DeezTrack{}
 
 	ParsedAPIUrl, _ := url.Parse(APIUrl)
@@ -255,7 +254,7 @@ func DecryptDownload(md5Origin, songID, format, mediaVersion string) (string, er
 }
 
 func GetAudioFile(downloadURL, id, FName string, client *http.Client) *OnError {
-	fmt.Println("Gopher's getting the audio File")
+	// fmt.Println("Gopher's getting the audio File")
 	req, err := newRequest(downloadURL, "GET", nil)
 	if err != nil {
 		return &OnError{err, "Error during GetAudioFile Get request"}
@@ -273,7 +272,7 @@ func GetAudioFile(downloadURL, id, FName string, client *http.Client) *OnError {
 }
 
 func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) error {
-	fmt.Println("Gopher is decrypting the media file")
+	// fmt.Println("Gopher is decrypting the media file")
 	chunkSize := 2048
 	bfKey := GetBlowFishKey(id)
 	i := 0
@@ -312,7 +311,7 @@ func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) error {
 	if err != nil {
 		return err
 	}
-	length, err := destBuffer.WriteTo(out)
+	length, err := destBuffer.WriteTo(out) // You might change form destBuffer.WriteTo(out) to destBuffer.WriteTo(os.Stdout)
 	if err != nil {
 		return err
 	}
