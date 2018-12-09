@@ -51,15 +51,15 @@ func init() {
 
 	if cfg.ID == "" {
 		fmt.Println("Error: Must have Deezer Track ID")
-		error_usage()
+		// error_usage()
 	}
 	if cfg.Username == "" {
 		fmt.Println("Error: Must have Username (Mail)")
-		error_usage()
+		// error_usage()
 	}
 	if cfg.Password == "" {
 		fmt.Println("Error: Must have Password")
-		error_usage()
+		// error_usage()
 	}
 
 }
