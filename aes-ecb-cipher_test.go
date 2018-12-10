@@ -1,4 +1,4 @@
-package main_test
+package main
 
 import (
 	"bytes"
@@ -6,8 +6,6 @@ import (
 	"crypto/md5"
 	"fmt"
 	"testing"
-
-	. "github.com/hopesanddreams/go-decrypt-deezer"
 )
 
 const (
