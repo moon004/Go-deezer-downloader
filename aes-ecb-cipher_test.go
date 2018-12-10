@@ -155,9 +155,14 @@ func TestGetUrlDownload(t *testing.T) {
 		TrackID  string
 	}{
 		{
-			Name:     "Get the correct Download Url",
+			Name:     "1. Get the correct Download Url",
 			Expected: "https://e-cdns-proxy-5.dzcdn.net/mobile/1/9c2ca4649cc23e7905f09324e9fe1d24505a18b97267b56b8deefecb1d62686d2f5a0bea21e1d6dbd9c8f34c691e12dc83cac650c014d41f69d381b0ce749ff5d38c5e89c566677c9cd24555e6c2bc02",
 			TrackID:  "3135556",
+		},
+		{
+			Name:     "2. Get the correct Download Url",
+			Expected: "https://e-cdns-proxy-1.dzcdn.net/mobile/1/ddc6a0cf945927b33b58d63290e98e2025728536839a151b7501557fac6f2320f8e630674ab260d5477a8a5be03da264f3a75e95e754bed1dbb20209fd40f3fe0c6bbe2d89ffed54b33cde8a984e9cdd3d0d871c865d5449ab015558f784802f",
+			TrackID:  "476921142",
 		},
 	}
 
