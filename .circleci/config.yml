@@ -1,16 +1,10 @@
 version: 2
 jobs:
-  "Go":
+  build:
     docker:
       -image: circleci/golang:latest
 
     steps:
       - checkout
-      - run:  cp -r vendor/* $GOPATH/src/
-      - run: go test -args --id 3135556 --username $
-
-workflows:
-  version: 2
-  build:
-    jobs:
-      - "Go"
+      - run: cp -r vendor/* $GOPATH/src/
+      - run: go test -args --id 3135556 --username $USERNAME --password $PASSWORD
