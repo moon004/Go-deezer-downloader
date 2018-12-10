@@ -1,4 +1,4 @@
-[![](https://img.shields.io/appveyor/ci/gruntjs/grunt.svg)](https://github.com/moon004/Go-deezer-downloader/pulls)
+[![](https://img.shields.io/appveyor/ci/gruntjs/grunt.svg)](https://github.com/moon004/Go-deezer-downloader/branches)
 
 ## Golang Premium Deezer music Downloader
 Download songs from Deezer in mp3 format. Any request of improvement are welcomed, just file a new issue~
