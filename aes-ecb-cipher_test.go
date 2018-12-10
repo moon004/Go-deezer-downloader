@@ -18,6 +18,22 @@ const (
 	finAnswer    = "9c2ca4649cc23e7905f09324e9fe1d24505a18b97267b56b8deefecb1d62686d2f5a0bea21e1d6dbd9c8f34c691e12dc83cac650c014d41f69d381b0ce749ff5d38c5e89c566677c9cd24555e6c2bc02"
 )
 
+func ErrChecker(t *testing.T, ErrMsg string, err error) {
+	if err != nil {
+		t.Fatalf("%s: %v", ErrMsg, err)
+	}
+}
+func OnErrorChecker(t *testing.T, err *OnError) {
+	if err != nil {
+		t.Fatalf("%s: %v", err.Message, err.Error)
+	}
+}
+
+func Equals(t *testing.T, myanswer, expected string) {
+	if myanswer != expected {
+		t.Errorf("Expected %s but I get %s", expected, myanswer)
+	}
+}
 func TestECBCipher(t *testing.T) {
 	inPart := bytes.Replace(
 		[]byte(
@@ -61,16 +77,12 @@ func TestECBCipher(t *testing.T) {
 			}
 
 			block, err := aes.NewCipher(tc.key)
-			if err != nil {
-				t.Errorf("Key error:%v", err)
-			}
+			ErrChecker(t, "Key Error", err)
 
 			ciphertext := make([]byte, len(input))
 			mode := NewECBEncrypter(block)
 			mode.CryptBlocks(ciphertext, input)
-			if tc.out != fmt.Sprintf("%x", ciphertext) {
-				t.Errorf("Expected output %s but I get %x", tc.out, ciphertext)
-			}
+			Equals(t, fmt.Sprintf("%x", ciphertext), tc.out)
 		})
 	}
 }
@@ -111,9 +123,7 @@ func TestMD5(t *testing.T) {
 			md5Sum := md5.Sum(tc.in)
 			out := fmt.Sprintf("%x", md5Sum)
 
-			if tc.out != out {
-				t.Errorf("expected output %s but get %s", tc.out, out)
-			}
+			Equals(t, out, tc.out)
 		})
 	}
 }
@@ -135,9 +145,35 @@ func TestBlowFish(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			BFKey := GetBlowFishKey(tc.in)
 
-			if BFKey != tc.out {
-				t.Errorf("expected: %s but get: %s", tc.out, BFKey)
-			}
+			Equals(t, BFKey, tc.out)
 		})
 	}
+}
+
+func TestGetUrlDownload(t *testing.T) {
+	tt := []struct {
+		Name     string
+		Expected string
+		TrackID  string
+	}{
+		{
+			Name:     "Get the correct Download Url",
+			Expected: "https://e-cdns-proxy-5.dzcdn.net/mobile/1/9c2ca4649cc23e7905f09324e9fe1d24505a18b97267b56b8deefecb1d62686d2f5a0bea21e1d6dbd9c8f34c691e12dc83cac650c014d41f69d381b0ce749ff5d38c5e89c566677c9cd24555e6c2bc02",
+			TrackID:  "3135556",
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.Name, func(t *testing.T) {
+			// Test the most important behavior
+			client, err := Login()
+			OnErrorChecker(t, err)
+
+			downloadURL, _, client, err := GetUrlDownload(tc.TrackID, client)
+			OnErrorChecker(t, err)
+			Equals(t, downloadURL, tc.Expected)
+
+		})
+	}
+
 }
