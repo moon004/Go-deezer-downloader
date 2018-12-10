@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  "Go build and Test":
+  "Go":
     docker:
       -image: circleci/golang:latest
 
@@ -13,4 +13,4 @@ workflows:
   version: 2
   build:
     jobs:
-      - "Go build and Test"
+      - "Go"
