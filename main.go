@@ -12,12 +12,13 @@ import (
 )
 
 const (
-	APIUrl   = "http://www.deezer.com/ajax/gw-light.php"
-	LoginUrl = "https://www.deezer.com/ajax/action.php"
+	// APIUrl is the deezer API
+	APIUrl = "http://www.deezer.com/ajax/gw-light.php"
+	// LoginURL is the API for deezer login
+	LoginURL = "https://www.deezer.com/ajax/action.php"
 )
 
 func main() {
-	// fmt.Println("Program Started")
 	id := cfg.ID
 	client, err := Login()
 	if err != nil {
@@ -31,6 +32,7 @@ func main() {
 	GetAudioFile(downloadURL, id, FName, client)
 }
 
+// Login will login the user with the provided credentials
 func Login() (*http.Client, *OnError) {
 	CookieJar, _ := cookiejar.New(nil)
 	client := &http.Client{
@@ -57,7 +59,7 @@ func Login() (*http.Client, *OnError) {
 	form.Add("mail", cfg.Username)
 	form.Add("password", cfg.Password)
 	form.Add("checkFormLogin", Deez.Results.CheckFormLogin)
-	req, err = newRequest(LoginUrl, "POST", form.Encode())
+	req, err = newRequest(LoginURL, "POST", form.Encode())
 	if err != nil {
 		return nil, &OnError{err, "Error during Login Request"}
 	}
@@ -86,6 +88,7 @@ func Login() (*http.Client, *OnError) {
 		"Can't Login, resp status code is" + string(resp.StatusCode)}
 }
 
+// GetUrlDownload get the url for the requested track
 func GetUrlDownload(id string, client *http.Client) (string, string, *http.Client, *OnError) {
 	// fmt.Println("Getting Download url")
 	jsonTrack := &DeezTrack{}
@@ -141,14 +144,15 @@ func GetUrlDownload(id string, client *http.Client) (string, string, *http.Clien
 	debug("(md5Origin: %v) (songID: %v) (format: %v) (mediaVersion:%v)",
 		md5Origin, songID, format, mediaVersion)
 
-	downloadUrl, err := DecryptDownload(md5Origin, songID, format, mediaVersion)
+	downloadURL, err := DecryptDownload(md5Origin, songID, format, mediaVersion)
 	if err != nil {
 		return "", "", nil, &OnError{err, "Error Getting DownloadUrl"}
 	}
-	debug("The Acquired Download Url:%s", downloadUrl)
-	return downloadUrl, FName, client, nil
+	debug("The Acquired Download Url:%s", downloadURL)
+	return downloadURL, FName, client, nil
 }
 
+// GetAudioFile gets the audio file from deezer server
 func GetAudioFile(downloadURL, id, FName string, client *http.Client) *OnError {
 	// fmt.Println("Gopher's getting the audio File")
 	req, err := newRequest(downloadURL, "GET", nil)
