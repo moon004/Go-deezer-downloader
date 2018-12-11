@@ -57,6 +57,7 @@ func addQs(req *http.Request, args ...string) *http.Request {
 	return req
 }
 
+// GetBlowFishKey get the BlowFishkey for decryption
 func GetBlowFishKey(id string) string {
 	Secret := "g4el58wc0zvf9na1"
 	md5Sum := md5.Sum([]byte(id))
@@ -70,6 +71,7 @@ func GetBlowFishKey(id string) string {
 	return BFKey
 }
 
+// GetToken get the login token
 func GetToken(client *http.Client, ParsedAPIUrl *url.URL) (string, *OnError) {
 	Deez := &DeezStruct{}
 	args := []string{"null", "deezer.getUserData"}
@@ -97,6 +99,7 @@ func GetToken(client *http.Client, ParsedAPIUrl *url.URL) (string, *OnError) {
 	return APIToken, nil
 }
 
+// DecryptDownload Get the encrypted download link
 func DecryptDownload(md5Origin, songID, format, mediaVersion string) (string, error) {
 	urlPart := md5Origin + "¤" + format + "¤" + songID + "¤" + mediaVersion
 	data := bytes.Replace([]byte(urlPart), []byte("¤"), []byte{164}, -1)
@@ -117,6 +120,7 @@ func DecryptDownload(md5Origin, songID, format, mediaVersion string) (string, er
 		nil
 }
 
+// DecryptMedia decrypts the encrypted media that is returned by Deezer's server
 func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) error {
 	// fmt.Println("Gopher is decrypting the media file")
 	chunkSize := 2048

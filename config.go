@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// Config is the configuration of the CLI
 type Config struct {
 	Debug    bool
 	Username string
@@ -13,7 +14,8 @@ type Config struct {
 	ID       string
 }
 
-var cfg *Config = &Config{ //default values
+// Initial value of the config
+var cfg = &Config{
 	false,
 	"",
 	"",
@@ -26,7 +28,8 @@ func debug(msg string, params ...interface{}) {
 	}
 }
 
-func error_usage() {
+// ErrorUsage lets the user knows the error
+func ErrorUsage() {
 	fmt.Println(`Guide: go-decrypt-deezer [--debug --id --username --password]`)
 	fmt.Println(`Example: go-decrypt-deezer --id 3135556 --username username_here --password password_here`)
 	flag.PrintDefaults()
@@ -51,15 +54,15 @@ func init() {
 
 	if cfg.ID == "" {
 		fmt.Println("Error: Must have Deezer Track ID")
-		// error_usage()
+		// ErrorUsage()
 	}
 	if cfg.Username == "" {
 		fmt.Println("Error: Must have Username (Mail)")
-		// error_usage()
+		// ErrorUsage()
 	}
 	if cfg.Password == "" {
 		fmt.Println("Error: Must have Password")
-		// error_usage()
+		// ErrorUsage()
 	}
 
 }

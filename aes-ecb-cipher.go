@@ -33,6 +33,7 @@ func newECB(b cipher.Block) *ecb {
 
 type ecbEncrypter ecb
 
+// NewECBEncrypter is the encrypter used by deezer
 func NewECBEncrypter(b cipher.Block) cipher.BlockMode {
 	return (*ecbEncrypter)(newECB(b))
 }
@@ -55,6 +56,7 @@ func (x *ecbEncrypter) CryptBlocks(dst, src []byte) {
 
 type ecbDecrypter ecb
 
+// NewECBDecrypter is used to decrypt the encrypted media
 func NewECBDecrypter(b cipher.Block) cipher.BlockMode {
 	return (*ecbDecrypter)(newECB(b))
 }
@@ -75,12 +77,14 @@ func (x *ecbDecrypter) CryptBlocks(dst, src []byte) {
 	}
 }
 
+// Pad is to pad the ciphertext so that it becomes the multiple of 8
 func Pad(src []byte) []byte {
 	padding := aes.BlockSize - len(src)%aes.BlockSize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
 	return append(src, padtext...)
 }
 
+// BFDecrypt is the blowfish decrpytion
 func BFDecrypt(buf []byte, bfKey string) ([]byte, error) {
 	decrypter, err := blowfish.NewCipher([]byte(bfKey)) // 8bytes
 	if err != nil {
