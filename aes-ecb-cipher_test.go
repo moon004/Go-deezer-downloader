@@ -161,7 +161,7 @@ func TestGetUrlDownload(t *testing.T) {
 		},
 		{
 			Name:     "2. Get the correct Download Url",
-			Expected: "https://e-cdns-proxy-1.dzcdn.net/mobile/1/ddc6a0cf945927b33b58d63290e98e2025728536839a151b7501557fac6f2320f8e630674ab260d5477a8a5be03da264f3a75e95e754bed1dbb20209fd40f3fe0c6bbe2d89ffed54b33cde8a984e9cdd3d0d871c865d5449ab015558f784802f",
+			Expected: "https://e-cdns-proxy-1.dzcdn.net/mobile/1/1afbf4ebd59db31e6fac7df8923ddda967cc566d1d3c167a6f51546c39199b1ef8e630674ab260d5477a8a5be03da264f3a75e95e754bed1dbb20209fd40f3fe4d310e68d8ccf384c5d347ca9e5860b83d0d871c865d5449ab015558f784802f",
 			TrackID:  "476921142",
 		},
 	}
@@ -169,6 +169,8 @@ func TestGetUrlDownload(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.Name, func(t *testing.T) {
 			// Test the most important behavior
+			cfg.Username = "Your username here"
+			cfg.Password = "Your password here"
 			client, err := Login()
 			OnErrorChecker(t, err)
 
