@@ -29,7 +29,10 @@ func main() {
 		log.Fatalf("%s: %v", err.Message, err.Error)
 	}
 
-	GetAudioFile(downloadURL, id, FName, client)
+	err = GetAudioFile(downloadURL, id, FName, client)
+	if err != nil {
+		log.Fatalf("%s and %v", err.Message, err.Error)
+	}
 }
 
 // Login will login the user with the provided credentials
@@ -166,7 +169,10 @@ func GetAudioFile(downloadURL, id, FName string, client *http.Client) *OnError {
 	}
 	debug("GetAudioFile reposene Cookies: %v", resp.Cookies())
 	debug("GetAudioFile Response:%v", resp)
-	DecryptMedia(resp.Body, id, FName, resp.ContentLength)
+	err = DecryptMedia(resp.Body, id, FName, resp.ContentLength)
+	if err != nil {
+		return &OnError{err, "Error during DecryptMedia"}
+	}
 	defer resp.Body.Close()
 	return nil
 }

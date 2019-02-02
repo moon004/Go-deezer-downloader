@@ -12,6 +12,9 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
+
+	"github.com/pkg/errors"
 )
 
 func newRequest(enPoint, method string, bodyEntity interface{}) (*http.Request, error) {
@@ -123,49 +126,62 @@ func DecryptDownload(md5Origin, songID, format, mediaVersion string) (string, er
 // DecryptMedia decrypts the encrypted media that is returned by Deezer's server
 func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) error {
 	// fmt.Println("Gopher is decrypting the media file")
+	var wg sync.WaitGroup
 	chunkSize := 2048
 	bfKey := GetBlowFishKey(id)
-	i := 0
-	position := 0
+	errc := make(chan error)
 	var err error
 	var destBuffer bytes.Buffer // final Product
 	debug("resp Body Size: %v", streamLen)
-	for position < int(streamLen) {
-		var chunkString []byte
-		// check if stream is of 2048
-		if (int(streamLen) - position) >= 2048 {
-			chunkSize = 2048
-		} else {
-			chunkSize = int(streamLen) - position
-		}
-		buf := make([]byte, chunkSize) // The "chunk" of data
-		if _, err = io.ReadFull(stream, buf); err != nil {
+	for position, i := 0, 0; position < int(streamLen); position, i = position+chunkSize, i+1 {
+		func(i, position int, streamLen int64, stream io.Reader) {
+			debug("Loop %v started", i)
+			var chunkString []byte
+			// check if stream is of 2048
+			if (int(streamLen) - position) >= 2048 {
+				chunkSize = 2048
+			} else {
+				chunkSize = int(streamLen) - position
+			}
+			buf := make([]byte, chunkSize) // The "chunk" of data
+			if _, err = io.ReadFull(stream, buf); err != nil {
+				errc <- errors.Wrapf(err, "error at loop %v", i)
+			}
+			if i%3 > 0 || chunkSize < 2048 {
+				chunkString = buf
+			} else { //Decrypt and then write to destBuffer
+				debug("decrypting at loop: %v", i)
+				chunkString, err = BFDecrypt(buf, bfKey)
+				if err != nil {
+					errc <- errors.Wrapf(err, "error at loop %v", i)
+				}
+			}
+			if _, err := destBuffer.Write(chunkString); err != nil {
+				errc <- errors.Wrapf(err, "error at loop %v", i)
+			}
+			debug("Current DecyptMedia byte: %v/%v loop: %v chunkSize: %v", position, int(streamLen), i, chunkSize)
+		}(i, position, streamLen, stream)
+	}
+	for {
+		select {
+		case err = <-errc:
+			debug("Got Error")
 			return err
-		}
-		if i%3 > 0 || chunkSize < 2048 {
-			chunkString = buf
-		} else { //Decrypt and then write to destBuffer
-			chunkString, err = BFDecrypt(buf, bfKey)
+		default:
+			debug("Default")
+			wg.Wait()
+			out, err := os.Create(FName)
 			if err != nil {
 				return err
 			}
-		}
-		if _, err := destBuffer.Write(chunkString); err != nil {
-			return err
-		}
-		position += chunkSize
-		i++
-		debug("Current DecyptMedia byte: %v", position)
-	}
-	out, err := os.Create(FName)
-	if err != nil {
-		return err
-	}
-	length, err := destBuffer.WriteTo(out) // You might change form destBuffer.WriteTo(out) to destBuffer.WriteTo(os.Stdout)
-	if err != nil {
-		return err
-	}
-	debug("Size Written: %v", length)
+			length, err := destBuffer.WriteTo(out) // You might change from destBuffer.WriteTo(out) to destBuffer.WriteTo(os.Stdout)
+			if err != nil {
+				return err
+			}
+			debug("Size Written: %v", length)
 
-	return nil
+			return nil
+		}
+	}
+
 }
