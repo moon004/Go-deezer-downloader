@@ -1,6 +1,9 @@
 ## Golang Premium Deezer music Downloader
 Download songs from Deezer in mp3 format. Any request of improvement are welcomed, just file a new issue~
 
+# Attention!
+***This project will be under maintenance, since there's a change in Deezer Server's API, so stay tune, Sorry for the inconvenience caused.***
+
 ## Usage
 Clone the project to local Repo
 `git clone -u https://github.com/moon004/GoDeezerDL.git`
