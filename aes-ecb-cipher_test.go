@@ -150,38 +150,38 @@ func TestBlowFish(t *testing.T) {
 	}
 }
 
-func TestGetUrlDownload(t *testing.T) {
-	tt := []struct {
-		Name     string
-		Expected string
-		TrackID  string
-	}{
-		{
-			Name:     "1. Get the correct Download Url",
-			Expected: LoadEnv("LINK1"),
-			TrackID:  "3135556",
-		},
-		{
-			Name:     "2. Get the correct Download Url",
-			Expected: LoadEnv("LINK2"),
-			TrackID:  "476921142",
-		},
-	}
+// func TestGetUrlDownload(t *testing.T) {
+// 	tt := []struct {
+// 		Name     string
+// 		Expected string
+// 		TrackID  string
+// 	}{
+// 		{
+// 			Name:     "1. Get the correct Download Url",
+// 			Expected: LoadEnv("LINK1"),
+// 			TrackID:  "3135556",
+// 		},
+// 		{
+// 			Name:     "2. Get the correct Download Url",
+// 			Expected: LoadEnv("LINK2"),
+// 			TrackID:  "476921142",
+// 		},
+// 	}
 
-	for _, tc := range tt {
-		t.Run(tc.Name, func(t *testing.T) {
-			// Test the most important behavior
-			cfg.UserToken = "UserToken Here"
-			client, err := Login()
-			OnErrorChecker(t, err)
+// 	for _, tc := range tt {
+// 		t.Run(tc.Name, func(t *testing.T) {
+// 			// Test the most important behavior
+// 			cfg.UserToken = "UserToken Here"
+// 			client, err := Login()
+// 			OnErrorChecker(t, err)
 
-			downloadURL, _, client, err := GetUrlDownload(tc.TrackID, client)
-			OnErrorChecker(t, err)
-			Equals(t, downloadURL, tc.Expected)
+// 			downloadURL, _, client, err := GetUrlDownload(tc.TrackID, client)
+// 			OnErrorChecker(t, err)
+// 			Equals(t, downloadURL, tc.Expected)
 
-		})
-	}
-}
+// 		})
+// 	}
+// }
 
 // LoadEnv loads env var
 func LoadEnv(str string) string {
