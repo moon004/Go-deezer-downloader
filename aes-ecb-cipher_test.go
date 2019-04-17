@@ -5,11 +5,9 @@ import (
 	"crypto/aes"
 	"crypto/md5"
 	"fmt"
-	"log"
 	"os"
+	"strings"
 	"testing"
-
-	"github.com/joho/godotenv"
 )
 
 const (
@@ -185,13 +183,13 @@ func TestGetUrlDownload(t *testing.T) {
 	}
 }
 
-// LoadEnv just loads Devkey from env
-func LoadEnv(str string) (value string) {
-	// Comment out the godotenv for CI to work
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Error loading .env file")
+// LoadEnv loads env var
+func LoadEnv(str string) string {
+	for _, value := range os.Environ() {
+		pair := strings.Split(value, "=")
+		if pair[0] == str {
+			return pair[1]
+		}
 	}
-	value = os.Getenv(str)
-	return
+	return ""
 }
