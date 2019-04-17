@@ -8,10 +8,11 @@ import (
 
 // Config is the configuration of the CLI
 type Config struct {
-	Debug    bool
-	Username string
-	Password string
-	ID       string
+	Debug     bool
+	Username  string
+	Password  string
+	ID        string
+	UserToken string
 }
 
 // Initial value of the config
@@ -20,11 +21,12 @@ var cfg = &Config{
 	"",
 	"",
 	"",
+	"",
 }
 
 func debug(msg string, params ...interface{}) {
 	if cfg.Debug {
-		fmt.Printf("\n"+msg+"\n", params...)
+		fmt.Printf("\n"+msg+"\n\n", params...)
 	}
 }
 
@@ -40,6 +42,7 @@ func init() {
 	flag.BoolVar(&cfg.Debug, "debug", false, "Turn on debuging mode.")
 	flag.StringVar(&cfg.Username, "username", "", "Your Deezer Username")
 	flag.StringVar(&cfg.Password, "password", "", "Your Deezer Password")
+	flag.StringVar(&cfg.UserToken, "usertoken", "", "Your Unique User Token")
 	flag.StringVar(&cfg.ID, "id", "", "Deezer Track ID")
 
 	flag.Parse()
@@ -50,6 +53,7 @@ func init() {
 	debug("\tDebug: %t", cfg.Debug)
 	debug("\tUsername: %s", cfg.Username)
 	debug("\tPassword: %s", cfg.Password)
+	debug("\tUserToken: %s", cfg.UserToken)
 	debug("\tID: %s", cfg.ID)
 
 	if cfg.ID == "" {
@@ -62,6 +66,10 @@ func init() {
 	}
 	if cfg.Password == "" {
 		fmt.Println("Error: Must have Password")
+		// ErrorUsage()
+	}
+	if cfg.UserToken == "" {
+		fmt.Println("Error: Must have UserToken")
 		// ErrorUsage()
 	}
 

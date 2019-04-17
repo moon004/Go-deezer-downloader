@@ -75,7 +75,7 @@ func GetBlowFishKey(id string) string {
 }
 
 // GetToken get the login token
-func GetToken(client *http.Client, ParsedAPIUrl *url.URL) (string, *OnError) {
+func GetToken(client *http.Client) (string, *OnError) {
 	Deez := &DeezStruct{}
 	args := []string{"null", "deezer.getUserData"}
 	reqs, err := newRequest(APIUrl, "GET", nil)
@@ -95,7 +95,6 @@ func GetToken(client *http.Client, ParsedAPIUrl *url.URL) (string, *OnError) {
 	if err != nil {
 		return "", &OnError{err, "Error During Unmarshal"}
 	}
-
 	APIToken := Deez.Results.DeezToken
 
 	debug("Display the Token %s", APIToken)
