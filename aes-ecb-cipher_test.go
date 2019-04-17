@@ -5,7 +5,11 @@ import (
 	"crypto/aes"
 	"crypto/md5"
 	"fmt"
+	"log"
+	"os"
 	"testing"
+
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -156,12 +160,12 @@ func TestGetUrlDownload(t *testing.T) {
 	}{
 		{
 			Name:     "1. Get the correct Download Url",
-			Expected: "https://e-cdns-proxy-5.dzcdn.net/mobile/1/9c2ca4649cc23e7905f09324e9fe1d24505a18b97267b56b8deefecb1d62686d2f5a0bea21e1d6dbd9c8f34c691e12dc83cac650c014d41f69d381b0ce749ff5d38c5e89c566677c9cd24555e6c2bc02",
+			Expected: LoadEnv("LINK1"),
 			TrackID:  "3135556",
 		},
 		{
 			Name:     "2. Get the correct Download Url",
-			Expected: "https://e-cdns-proxy-1.dzcdn.net/mobile/1/1afbf4ebd59db31e6fac7df8923ddda967cc566d1d3c167a6f51546c39199b1ef8e630674ab260d5477a8a5be03da264f3a75e95e754bed1dbb20209fd40f3fe4d310e68d8ccf384c5d347ca9e5860b83d0d871c865d5449ab015558f784802f",
+			Expected: LoadEnv("LINK2"),
 			TrackID:  "476921142",
 		},
 	}
@@ -169,8 +173,7 @@ func TestGetUrlDownload(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.Name, func(t *testing.T) {
 			// Test the most important behavior
-			cfg.Username = "Your username here"
-			cfg.Password = "Your password here"
+			cfg.UserToken = "UserToken Here"
 			client, err := Login()
 			OnErrorChecker(t, err)
 
@@ -180,5 +183,15 @@ func TestGetUrlDownload(t *testing.T) {
 
 		})
 	}
+}
 
+// LoadEnv just loads Devkey from env
+func LoadEnv(str string) (value string) {
+	// Comment out the godotenv for CI to work
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Error loading .env file")
+	}
+	value = os.Getenv(str)
+	return
 }
