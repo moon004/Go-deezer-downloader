@@ -62,8 +62,6 @@ func Login() (*http.Client, *OnError) {
 
 	form := url.Values{}
 	form.Add("type", "login")
-	form.Add("mail", cfg.Username)
-	form.Add("password", cfg.Password)
 	form.Add("checkFormLogin", Deez.Results.CheckFormLogin)
 	req, err = newRequest(LoginURL, "POST", form.Encode())
 	if err != nil {
