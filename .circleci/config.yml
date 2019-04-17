@@ -7,4 +7,4 @@ jobs:
     steps:
       - checkout
       - run: cp -r vendor/* $GOPATH/src/
-      - run: go test -args --id 3135556 --username $USERNAME --password $PASSWORD
+      - run: go test -args --id 3135556 --usertoken $USERTOKEN
