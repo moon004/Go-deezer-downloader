@@ -169,7 +169,10 @@ func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) error {
 		default:
 			debug("Default")
 			wg.Wait()
-			out, err := os.Create(FName)
+			debug("FName", FName)
+			NameWithoutSlash := strings.ReplaceAll(FName, "/", "∕")
+			debug("NameWithoutSlash ", NameWithoutSlash)
+			out, err := os.Create(NameWithoutSlash)
 			if err != nil {
 				return err
 			}
