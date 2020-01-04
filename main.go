@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"os"
 	"strconv"
 	"time"
 )
@@ -27,14 +28,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s: %v", err.Message, err.Error)
 	}
-	downloadURL, FName, client, err := GetUrlDownload(id, client)
+	downloadURL, FName, client, err, size := GetUrlDownload(id, client)
 	if err != nil {
 		log.Fatalf("%s: %v", err.Message, err.Error)
 	}
 
-	err = GetAudioFile(downloadURL, id, FName, client)
-	if err != nil {
-		log.Fatalf("%s and %v", err.Message, err.Error)
+	if cfg.GetSize {
+		fmt.Fprintf(os.Stdout, size)
+	} else {
+		err = GetAudioFile(downloadURL, id, FName, client)
+		if err != nil {
+			log.Fatalf("%s and %v", err.Message, err.Error)
+		}
 	}
 }
 
@@ -124,7 +129,7 @@ func addCookies(client *http.Client, CookieURL *url.URL) {
 }
 
 // GetUrlDownload get the url for the requested track
-func GetUrlDownload(id string, client *http.Client) (string, string, *http.Client, *OnError) {
+func GetUrlDownload(id string, client *http.Client) (string, string, *http.Client, *OnError, string) {
 	// fmt.Println("Getting Download url")
 	jsonTrack := &DeezTrack{}
 
@@ -135,7 +140,7 @@ func GetUrlDownload(id string, client *http.Client) (string, string, *http.Clien
 	jsonStr := []byte(jsonPrep)
 	req, err := newRequest(APIUrl, "POST", jsonStr)
 	if err != nil {
-		return "", "", nil, &OnError{err, "Error during GetUrlDownload request"}
+		return "", "", nil, &OnError{err, "Error during GetUrlDownload request"}, ""
 	}
 
 	qs := url.Values{}
@@ -157,7 +162,7 @@ func GetUrlDownload(id string, client *http.Client) (string, string, *http.Clien
 
 	err = json.Unmarshal(body, &jsonTrack)
 	if err != nil {
-		return "", "", nil, &OnError{err, "Error during GetUrlDownload Unmarshalling"}
+		return "", "", nil, &OnError{err, "Error during GetUrlDownload Unmarshalling"}, ""
 	}
 	FileSize320, _ := jsonTrack.Results.DATA.FileSize320.Int64()
 	FileSize256, _ := jsonTrack.Results.DATA.FileSize256.Int64()
@@ -179,15 +184,19 @@ func GetUrlDownload(id string, client *http.Client) (string, string, *http.Clien
 	songTitle := jsonTrack.Results.DATA.SngTitle
 	artName := jsonTrack.Results.DATA.ArtName
 	FName := fmt.Sprintf("%s - %s.mp3", songTitle, artName)
-	debug("(md5Origin: %v) (songID: %v) (format: %v) (mediaVersion:%v)",
-		md5Origin, songID, format, mediaVersion)
+	AudioSize := jsonTrack.Results.DATA.FileSize320
+	debug("(md5Origin: %v) (songID: %v) (format: %v) (mediaVersion:%v) (AudioSize:%v)",
+		md5Origin, songID, format, mediaVersion, AudioSize)
 
+	if cfg.GetSize {
+		return "", "", nil, nil, string(AudioSize)
+	}
 	downloadURL, err := DecryptDownload(md5Origin, songID, format, mediaVersion)
 	if err != nil {
-		return "", "", nil, &OnError{err, "Error Getting DownloadUrl"}
+		return "", "", nil, &OnError{err, "Error Getting DownloadUrl"}, ""
 	}
 	debug("The Acquired Download Url:%s", downloadURL)
-	return downloadURL, FName, client, nil
+	return downloadURL, FName, client, nil, ""
 }
 
 // GetAudioFile gets the audio file from deezer server

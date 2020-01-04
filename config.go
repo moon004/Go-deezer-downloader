@@ -9,12 +9,14 @@ import (
 // Config is the configuration of the CLI
 type Config struct {
 	Debug     bool
+	GetSize   bool
 	ID        string
 	UserToken string
 }
 
 // Initial value of the config
 var cfg = &Config{
+	false,
 	false,
 	"",
 	"",
@@ -37,6 +39,7 @@ func ErrorUsage() {
 
 func init() {
 	flag.BoolVar(&cfg.Debug, "debug", false, "Turn on debuging mode.")
+	flag.BoolVar(&cfg.GetSize, "getsize", false, "Only Get the Size of the 320kpbs audio")
 	flag.StringVar(&cfg.UserToken, "usertoken", "", "Your Unique User Token")
 	flag.StringVar(&cfg.ID, "id", "", "Deezer Track ID")
 
