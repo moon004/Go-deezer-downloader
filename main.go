@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 const (
@@ -20,18 +22,23 @@ const (
 func main() {
 	id := cfg.ID
 	client := &http.Client{}
-	downloadURL, FName, client, err := GetUrlDownload(id, client)
+	downloadURL, FName, size, client, err := GetUrlDownload(id, client)
 	if err != nil {
 		log.Fatalf("%s: %v", err.Message, err.Error)
 	}
-	err = GetAudioFile(downloadURL, id, FName, client)
-	if err != nil {
-		log.Fatalf("%s and %v", err.Message, err.Error)
+
+	if cfg.GetSize {
+		fmt.Fprintf(os.Stdout, size)
+	} else {
+		err = GetAudioFile(downloadURL, id, FName, client)
+		if err != nil {
+			log.Fatalf("%s and %v", err.Message, err.Error)
+		}
 	}
 }
 
 // GetUrlDownload get the url for the requested track
-func GetUrlDownload(id string, client *http.Client) (string, string, *http.Client, *OnError) {
+func GetUrlDownload(id string, client *http.Client) (string, string, string, *http.Client, *OnError) {
 	// fmt.Println("Getting Download url")
 	jsonTrack := &TrackData{}
 	//APIToken, _ := GetCSRFToken(client)
@@ -41,7 +48,7 @@ func GetUrlDownload(id string, client *http.Client) (string, string, *http.Clien
 	jsonStr := []byte(jsonPrep)
 	req, err := newRequest(MobileUrl, "POST", jsonStr)
 	if err != nil {
-		return "", "", nil, &OnError{err, "Error during GetUrlDownload request"}
+		return "", "", "", nil, &OnError{err, "Error during GetUrlDownload request"}
 	}
 	req = addMobileQs(req, SIDToken)
 
@@ -54,7 +61,7 @@ func GetUrlDownload(id string, client *http.Client) (string, string, *http.Clien
 
 	err = json.Unmarshal(body, &jsonTrack)
 	if err != nil {
-		return "", "", nil, &OnError{err, "Error during GetUrlDownload Unmarshalling"}
+		return "", "", "", nil, &OnError{err, "Error during GetUrlDownload Unmarshalling"}
 	}
 	FileSize320, _ := jsonTrack.Results.FileSize320.Int64()
 	FileSize256, _ := jsonTrack.Results.FileSize256.Int64()
@@ -79,12 +86,16 @@ func GetUrlDownload(id string, client *http.Client) (string, string, *http.Clien
 	debug("(md5Origin: %v) (songID: %v) (format: %v) (mediaVersion:%v)",
 		md5Origin, songID, format, mediaVersion)
 
+	if cfg.GetSize {
+		size := strconv.FormatInt(FileSize320, 10)
+		return "", "", size, nil, nil
+	}
 	downloadURL, err := DecryptDownload(md5Origin, songID, format, mediaVersion)
 	if err != nil {
-		return "", "", nil, &OnError{err, "Error Getting DownloadUrl"}
+		return "", "", "", nil, &OnError{err, "Error Getting DownloadUrl"}
 	}
 	debug("The Acquired Download Url:%s", downloadURL)
-	return downloadURL, FName, client, nil
+	return downloadURL, FName, "", client, nil
 }
 
 // GetAudioFile gets the audio file from deezer server

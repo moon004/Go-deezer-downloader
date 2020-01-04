@@ -5,10 +5,16 @@ Download songs from Deezer in mp3 format. Any request of improvement are welcome
 
 ## Usage
 Clone the project to local Repo
-`git clone https://github.com/moon004/GoDeezerDL.git`
+`git clone https://github.com/moon004/Go-Deezer-downloader.git`
 
-And to download a track:
-`go-decrypt-deezer --id track-id`
+To download a track from Deezer.
+`Go-deezer-downloader --id track-id`
+
+To Get the size of the track.
+`Go-deezer-downloader --id track-id --getsize`
+
+## UserToken?
+Click this [link to get your Deezer UserToken.](https://notabug.org/RemixDevs/DeezloaderRemix/wiki/Login+via+userToken)
 
 ## Contribute
 All requests are welcomed, but, please drop me a mail **herodotus94@gmail.com** beforehand, I would love to respond to your mails.
