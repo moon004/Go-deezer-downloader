@@ -60,19 +60,6 @@ func addQs(req *http.Request, args ...string) *http.Request {
 	return req
 }
 
-func addMobileQs(req *http.Request, SIDToken string) *http.Request {
-	qs := url.Values{}
-	qs.Add("api_key", ApiKey)
-	qs.Add("sid", SIDToken)
-	qs.Add("output", "3")
-	qs.Add("input", "3")
-	qs.Add("method", "song_getData")
-
-	req.URL.RawQuery = qs.Encode()
-
-	return req
-}
-
 // GetBlowFishKey get the BlowFishkey for decryption
 func GetBlowFishKey(id string) string {
 	Secret := "g4el58wc0zvf9na1"
@@ -87,33 +74,31 @@ func GetBlowFishKey(id string) string {
 	return BFKey
 }
 
-// GetTokens Get the required tokens used in api calls
-func GetTokens(client *http.Client) (string, string, *OnError) {
-	tokens := &Tokens{}
+// GetToken get the login token
+func GetToken(client *http.Client) (string, *OnError) {
+	Deez := &DeezStruct{}
 	args := []string{"null", "deezer.getUserData"}
 	reqs, err := newRequest(APIUrl, "GET", nil)
 	if err != nil {
-		return "", "", &OnError{err, "Error during GetToken GET request"}
+		return "", &OnError{err, "Error during GetToken GET request"}
 	}
 	reqs = addQs(reqs, args...)
 	resp, err := client.Do(reqs)
 	if err != nil {
-		return "", "", &OnError{err, "Error during GetToken response"}
+		return "", &OnError{err, "Error during GetToken response"}
 	}
 
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	err = json.Unmarshal(body, &tokens)
+	err = json.Unmarshal(body, &Deez)
 	if err != nil {
-		return "", "", &OnError{err, "Error During Unmarshal"}
+		return "", &OnError{err, "Error During Unmarshal"}
 	}
-	CSRFToken := tokens.Results.DeezToken
-	SIDToken := tokens.Results.SessionId
+	APIToken := Deez.Results.DeezToken
 
-	debug("The CSRF token is %s", CSRFToken)
-	debug("The SID token is %s", SIDToken)
-	return SIDToken, CSRFToken, nil
+	debug("Display the Token %s", APIToken)
+	return APIToken, nil
 }
 
 // DecryptDownload Get the encrypted download link
@@ -187,11 +172,11 @@ func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) error {
 			debug("FName", FName)
 			NameWithoutSlash := strings.ReplaceAll(FName, "/", "∕")
 			debug("NameWithoutSlash ", NameWithoutSlash)
-			_, err := os.Create(NameWithoutSlash)
+			out, err := os.Create(NameWithoutSlash)
 			if err != nil {
 				return err
 			}
-			length, err := destBuffer.WriteTo(os.Stdout) // You might change from destBuffer.WriteTo(out) to destBuffer.WriteTo(os.Stdout)
+			length, err := destBuffer.WriteTo(out) // You might change from destBuffer.WriteTo(out) to destBuffer.WriteTo(os.Stdout)
 			if err != nil {
 				return err
 			}
