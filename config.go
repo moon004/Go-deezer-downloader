@@ -10,11 +10,13 @@ import (
 type Config struct {
 	Debug     bool
 	ID        string
+	UserToken string
 }
 
 // Initial value of the config
 var cfg = &Config{
 	false,
+	"",
 	"",
 }
 
@@ -26,8 +28,8 @@ func debug(msg string, params ...interface{}) {
 
 // ErrorUsage lets the user knows the error
 func ErrorUsage() {
-	fmt.Println(`Guide: Go-deezer-downloader [--debug --id]`)
-	fmt.Println(`Example: Go-deezer-downloader --id 3135556`)
+	fmt.Println(`Guide: go-decrypt-deezer [--debug --id --usertoken`)
+	fmt.Println(`Example: go-decrypt-deezer --id 3135556`)
 	flag.PrintDefaults()
 	os.Exit(1)
 }
@@ -37,7 +39,10 @@ func init() {
 	flag.StringVar(&cfg.ID, "id", "", "Deezer Track ID")
 
 	flag.Parse()
+
+	// fmt.Println("Make Sure You Register your Deezer")
 	debug("Configuration:")
+
 	debug("\tDebug: %t", cfg.Debug)
 	debug("\tID: %s", cfg.ID)
 
@@ -45,4 +50,5 @@ func init() {
 		fmt.Println("Error: Must have Deezer Track(Song) ID")
 		ErrorUsage()
 	}
+
 }
