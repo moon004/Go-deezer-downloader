@@ -28,7 +28,7 @@ func debug(msg string, params ...interface{}) {
 
 // ErrorUsage lets the user knows the error
 func ErrorUsage() {
-	fmt.Println(`Guide: go-decrypt-deezer [--debug --id --usertoken`)
+	fmt.Println(`Guide: go-decrypt-deezer [--debug --id`)
 	fmt.Println(`Example: go-decrypt-deezer --id 3135556`)
 	flag.PrintDefaults()
 	os.Exit(1)
