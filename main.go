@@ -174,7 +174,7 @@ func GetUrlDownload(id string, client *http.Client) (string, string, *http.Clien
 		format = "8"
 	}
 	songID := jsonTrack.Results.DATA.ID.String()
-	md5Origin := jsonTrack.Results.DATA.MD5Origin.String()
+	md5Origin := jsonTrack.Results.DATA.MD5Origin
 	mediaVersion := jsonTrack.Results.DATA.MediaVersion.String()
 	songTitle := jsonTrack.Results.DATA.SngTitle
 	artName := jsonTrack.Results.DATA.ArtName
