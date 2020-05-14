@@ -17,7 +17,7 @@ type ResultList struct {
 // TrackData Json struct for getting the returned json data
 type TrackData struct {
 	ID           json.Number `json:"SNG_ID"`
-	MD5Origin    json.Number `json:"MD5_ORIGIN"`
+	MD5Origin    string      `json:"MD5_ORIGIN"`
 	FileSize320  json.Number `json:"FILESIZE_MP3_320"`
 	FileSize256  json.Number `json:"FILESIZE_MP3_256"`
 	FileSize128  json.Number `json:"FILESIZE_MP3_128"`
