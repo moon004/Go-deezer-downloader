@@ -28,14 +28,16 @@ func debug(msg string, params ...interface{}) {
 
 // ErrorUsage lets the user knows the error
 func ErrorUsage() {
-	fmt.Println(`Guide: go-decrypt-deezer [--debug --id`)
-	fmt.Println(`Example: go-decrypt-deezer --id 3135556`)
+	fmt.Println(`Guide: go-decrypt-deezer [--debug --id --usertoken`)
+	fmt.Println(`How Do I Get My UserToken?: https://notabug.org/RemixDevs/DeezloaderRemix/wiki/Login+via+userToken`)
+	fmt.Println(`Example: go-decrypt-deezer --id 3135556 --usertoken UserToken_here`)
 	flag.PrintDefaults()
 	os.Exit(1)
 }
 
 func init() {
 	flag.BoolVar(&cfg.Debug, "debug", false, "Turn on debuging mode.")
+	flag.StringVar(&cfg.UserToken, "usertoken", "", "Your Unique User Token")
 	flag.StringVar(&cfg.ID, "id", "", "Deezer Track ID")
 
 	flag.Parse()
@@ -44,10 +46,15 @@ func init() {
 	debug("Configuration:")
 
 	debug("\tDebug: %t", cfg.Debug)
+	debug("\tUserToken: %s", cfg.UserToken)
 	debug("\tID: %s", cfg.ID)
 
 	if cfg.ID == "" {
 		fmt.Println("Error: Must have Deezer Track(Song) ID")
+		ErrorUsage()
+	}
+	if cfg.UserToken == "" {
+		fmt.Println("Error: Must have UserToken")
 		ErrorUsage()
 	}
 
