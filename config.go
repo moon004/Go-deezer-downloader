@@ -53,9 +53,5 @@ func init() {
 		fmt.Println("Error: Must have Deezer Track(Song) ID")
 		ErrorUsage()
 	}
-	if cfg.UserToken == "" {
-		fmt.Println("Error: Must have UserToken")
-		ErrorUsage()
-	}
 
 }

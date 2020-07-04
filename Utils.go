@@ -172,11 +172,7 @@ func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) error {
 			debug("FName", FName)
 			NameWithoutSlash := strings.ReplaceAll(FName, "/", "∕")
 			debug("NameWithoutSlash ", NameWithoutSlash)
-			out, err := os.Create(NameWithoutSlash)
-			if err != nil {
-				return err
-			}
-			length, err := destBuffer.WriteTo(out) // You might change from destBuffer.WriteTo(out) to destBuffer.WriteTo(os.Stdout)
+			length, err := destBuffer.WriteTo(os.Stdout) // You might change from destBuffer.WriteTo(out) to destBuffer.WriteTo(os.Stdout)
 			if err != nil {
 				return err
 			}
