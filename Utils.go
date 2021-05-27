@@ -10,7 +10,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"sync"
 
@@ -123,7 +122,7 @@ func DecryptDownload(md5Origin, songID, format, mediaVersion string) (string, er
 }
 
 // DecryptMedia decrypts the encrypted media that is returned by Deezer's server
-func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) error {
+func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) (*bytes.Buffer, error) {
 	// fmt.Println("Gopher is decrypting the media file")
 	var wg sync.WaitGroup
 	chunkSize := 2048
@@ -165,20 +164,11 @@ func DecryptMedia(stream io.Reader, id, FName string, streamLen int64) error {
 		select {
 		case err = <-errc:
 			debug("Got Error")
-			return err
+			return nil, err
 		default:
 			debug("Default")
 			wg.Wait()
-			debug("FName", FName)
-			NameWithoutSlash := strings.ReplaceAll(FName, "/", "∕")
-			debug("NameWithoutSlash ", NameWithoutSlash)
-			length, err := destBuffer.WriteTo(os.Stdout) // You might change from destBuffer.WriteTo(out) to destBuffer.WriteTo(os.Stdout)
-			if err != nil {
-				return err
-			}
-			debug("Size Written: %v", length)
-
-			return nil
+			return &destBuffer, nil
 		}
 	}
 
